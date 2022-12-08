@@ -41,7 +41,7 @@ KEYFILE=${PFXFILE%.pfx}.key
 #
 # Extract the certificate, convert from pkcs12 to PEM
 #
-echo "Extracting certificate from ${PFXFILE} to ${CRTFILE}"
+echo -e "Extracting certificate from ${PFXFILE} to ${CRTFILE}.\nEnter the PFX-file password."
 openssl pkcs12 -in ${PFXFILE} -out ${CRTFILE} -nokeys || exit $?
 
 #
@@ -49,9 +49,9 @@ openssl pkcs12 -in ${PFXFILE} -out ${CRTFILE} -nokeys || exit $?
 # Password is removed to make the key work with webservers
 # such as nginx and apache
 #
-echo -e "\nExtracting key from ${PFXFILE} to ${KEYCRTFILE} (with password)"
+echo -e "\nExtracting key from ${PFXFILE} to ${KEYCRTFILE} (with password).\nEnter the PFX-file password."
 openssl pkcs12 -in ${PFXFILE} -out ${KEYCRTFILE} || exit $?
-echo -e "\nConverting key from PKCS12 in ${KEYCRTFILE} to PEM in ${KEYFILE} (removing password)"
+echo -e "\nConverting key from PKCS12 in ${KEYCRTFILE} to PEM in ${KEYFILE} (removing password)\nEnter the PFX-file password."
 openssl rsa -in ${KEYCRTFILE} -out ${KEYFILE} || exit $?
 
 
@@ -65,8 +65,17 @@ Copy the following files to your destination:
 CRT-File: ${CRTFILE}
 KEY-File: ${KEYFILE}
 
-Certificate details:
+#
+# Certificate details for ${CRTFILE}:
+#
 $(cat ${CRTFILE} |
     openssl x509 -noout -text |
     awk '/ (Subject|Issuer|Not (Before|After)) *:/ { sub(/^\W+/,"") ; print }')
+
+#
+# Verifying keyfile ${KEYFILE}
+#
+$(cat ${KEYFILE} |
+    openssl rsa -check 2>&1 |
+    sed '/^-----BEGIN/,$d')
 "
