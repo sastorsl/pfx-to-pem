@@ -4,7 +4,7 @@ So you've received your shiny certificate, and it's in a PFX, with a password.
 
 This won't do in a lot of software, such as apache, nginx or haproxy.
 
-This script will take your certificate as input, ask for you password, and then output the certificate and it's keyfile - without passwords.
+This script will take your certificate as input, ask for the PFX password, convert to PEM with password, and then finally write the certificate and it's keyfile - without passwords - doing some checks on the way.
 
 # Usage
 
@@ -40,5 +40,4 @@ Issuer: <issuer>
 Not Before: Nov 17 09:29:40 2022 GMT
 Not After : Dec 11 22:59:00 2023 GMT
 Subject: <subject>
-
 ```
